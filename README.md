@@ -1,2 +1,88 @@
 # mint-it
-Stable coins security research
+
+Stablecoin security research. The repository builds local and devnet replicas of Tether USD (USDT) and checks how minting, redemption, admin controls, and token-standard quirks behave.
+
+The work studies the published USDT surfaces on Ethereum and Solana. It uses those replicas to ask who can change supply, who can freeze or seize balances, and which token behaviors differ from a plain ERC-20 or SPL token integration.
+
+## Research focus
+
+| Question | Where it shows up |
+|---|---|
+| Who can mint, and into which balance? | Ethereum `issue` credits the owner. Solana `mintTo` requires the mint authority. |
+| Who can redeem or burn? | Ethereum `redeem` burns from the owner balance only. The Solana scripts cover minting. |
+| What can an admin freeze, pause, or seize? | Ethereum blacklist, pause, and `destroyBlackFunds`. Solana freeze authority on token accounts. |
+| How do fees and allowances behave? | Ethereum `setParams` (hard-capped) and the non-zero allowance reset. |
+| What happens on upgrade? | Ethereum `deprecate` forwards ERC-20 calls. Legacy `issue` / `redeem` still write the old ledger. |
+| Does the replica match mainnet? | Bytecode and metadata parity tests. Mainnet access in those tests is read-only. |
+
+Collateral custody, oracle feeds, and peg-keeping contracts are outside this tree. The tokens are named and parameterized like USDT. Reserves and prices are unrepresented in the code.
+
+## Layout
+
+```
+mint-it/
+  ETH/          Hardhat replica of Ethereum mainnet USDT (local chain 31337)
+  SOL/          SPL Token replica of Solana mainnet USDT (devnet)
+  docs/         Research scope, chain notes, and security boundaries
+  LICENSE       MIT license
+```
+
+Each package has its own README:
+
+- [ETH/README.md](ETH/README.md) — local Hardhat chain, deploy, and mint
+- [SOL/README.md](SOL/README.md) — devnet mint, metadata, and tests
+
+## Prerequisites
+
+- Node.js and npm. Both packages ship `package-lock.json` (npm lockfile version 3). Install dependencies with npm in the package you are running.
+- For `ETH/`: a free local port `8545`. Scripts refuse every chain id other than `31337`.
+- For `SOL/`: the three keypair files described in the Solana README, and devnet SOL on the authority account for rent and fees.
+- Outbound HTTPS for parity tests, which read public mainnet RPC endpoints.
+
+## Run the Ethereum replica
+
+From `ETH/`:
+
+```bash
+npm install
+npm run keys                      # keys/owner.json and keys/wallet.json (idempotent)
+npm run node                      # terminal 1: Hardhat node at 127.0.0.1:8545
+npm run deploy                    # terminal 2: deploy TetherToken
+AMOUNT=5000 npm run mint          # owner issue(), then transfer to the local wallet
+npm test                          # behavior, mainnet bytecode parity, local deployment
+```
+
+`npm run mint` defaults to `1000000` USDT when `AMOUNT` is unset. The Hardhat node is in-memory. After a restart, run `deploy` and `mint` again.
+
+## Run the Solana replica
+
+From `SOL/`:
+
+```bash
+npm install
+npm run create                    # create the devnet mint and Metaplex metadata (idempotent)
+npm run mint -- 5000              # mint 5000 USDT to keys/wallet.json
+npm run set-uri -- <metadata-url>
+npm test                          # devnet checks; mainnet is read for parity
+```
+
+`npm run mint` defaults to `1000000` when the amount argument is omitted. `RPC_URL` selects the cluster and defaults to `https://api.devnet.solana.com`.
+
+## Safety
+
+This repository is defensive security research for a local Hardhat chain and Solana devnet. Keep mainnet use to the read-only parity checks already in the tests.
+
+The material is research tooling and documentation. It is not financial advice, and it is not an invitation or a procedure for attacking live stablecoin systems. Details are in [docs/security.md](docs/security.md).
+
+## Documentation
+
+- [docs/overview.md](docs/overview.md) — scope and threat model
+- [docs/ethereum.md](docs/ethereum.md) — Ethereum replica, compiler parity, and tested behaviors
+- [docs/solana.md](docs/solana.md) — Solana replica, authorities, and devnet tests
+- [docs/security.md](docs/security.md) — research boundaries and key handling
+
+## License
+
+Released under the [MIT License](LICENSE). Copyright (c) 2026 Alex.
+
+`ETH/contracts/TetherToken.sol` is the published mainnet USDT source, kept so the local build can be compared with chain bytecode. The license covers this repository's scripts, tests, and docs.
