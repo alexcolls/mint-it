@@ -21,10 +21,11 @@ Collateral custody, oracle feeds, and peg-keeping contracts are outside this tre
 
 ```
 mint-it/
-  ETH/          Hardhat replica of Ethereum mainnet USDT (local chain 31337)
-  SOL/          SPL Token replica of Solana mainnet USDT (devnet)
-  docs/         Research scope, chain notes, and security boundaries
-  LICENSE       MIT license
+  ETH/              Hardhat replica of Ethereum mainnet USDT (local chain 31337)
+  SOL/              SPL Token replica of Solana mainnet USDT (devnet)
+  docs/             Research scope, chain notes, and security boundaries
+  CONTRIBUTING.md   Setup, research boundary, and pull request expectations
+  LICENSE           MIT license
 ```
 
 Each package has its own README:
@@ -76,10 +77,17 @@ The material is research tooling and documentation. It is not financial advice, 
 
 ## Documentation
 
-- [docs/overview.md](docs/overview.md) — scope and threat model
-- [docs/ethereum.md](docs/ethereum.md) — Ethereum replica, compiler parity, and tested behaviors
-- [docs/solana.md](docs/solana.md) — Solana replica, authorities, and devnet tests
-- [docs/security.md](docs/security.md) — research boundaries and key handling
+Read in this order when you are new to the tree:
+
+1. This file, for the layout and the commands
+2. [docs/overview.md](docs/overview.md) — scope and threat model
+3. [docs/security.md](docs/security.md) — research boundaries and key handling
+4. The package you are running: [ETH/README.md](ETH/README.md) or [SOL/README.md](SOL/README.md)
+5. [docs/ethereum.md](docs/ethereum.md) or [docs/solana.md](docs/solana.md) — compiler parity, environment variables, and what the tests assert
+
+## Contributing
+
+Setup, the research boundary, secrets, style, and pull request expectations are in [CONTRIBUTING.md](CONTRIBUTING.md). Commit messages in this project follow Conventional Commits (`feat`, `fix`, `docs`, `test`, and similar), with an optional scope such as `eth` or `sol`.
 
 ## License
 

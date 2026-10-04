@@ -8,7 +8,7 @@ Package name: `minter`. Dependencies come from npm (`package-lock.json`). Script
 
 | Property | Mainnet USDT | This replica |
 |---|---|---|
-| Program | SPL Token (`Tokenkeg…`) | Same. Token-2022 is unused |
+| Program | Legacy SPL Token (`Tokenkeg…`) | Same program id |
 | Decimals | 6 | 6 |
 | Mint, freeze, and update authority | One key | One key, `keys/authority.json` |
 | Metadata | name `USDT`, symbol `USDT`, uri empty, 0 seller fee, no creators, mutable | Same fields at creation |
@@ -37,7 +37,7 @@ These are the public keys of the key files in this working copy:
 - `mint.json` — keypair whose public key is the mint account address
 - `wallet.json` — owner of the associated token account that receives minted USDT
 
-Generate the three files with the Solana CLI (or another keypair tool) and fund `authority.json` with devnet SOL before `npm run create` or `npm run mint`. This package only loads keys. Fund the authority from a devnet faucet.
+This package only loads keys. Generate the three files with the Solana CLI before the first command, and fund `authority.json` with devnet SOL from a faucet. The `solana-keygen` commands are in [../CONTRIBUTING.md](../CONTRIBUTING.md).
 
 ## Setup and commands
 
@@ -63,8 +63,8 @@ Environment:
 - `RPC_URL` — cluster for scripts and devnet assertions. Default `https://api.devnet.solana.com`.
 - `MAINNET_RPC_URL` — read-only endpoint for parity. Default `https://api.mainnet-beta.solana.com`.
 
-`RPC_URL` is the only cluster selector. Keep it on devnet for this research. Ethereum deploy and mint abort unless the chain id is 31337. These scripts follow `RPC_URL` as given.
+`RPC_URL` selects the cluster. Leave it on the devnet default when you run these commands. The scripts sign with `keys/authority.json` and submit to the cluster that variable names.
 
-`npm test` loads the three key files at startup, talks to devnet, and expects the mint to exist and the wallet balance to be above zero. The freeze test freezes the wallet token account, checks that a transfer fails, thaws it, moves 1 base-unit out, and moves it back. If the process stops inside that test, the authority can thaw the account with the freeze authority.
+`npm test` loads the three key files at startup, so a missing file fails before any test runs. It talks to devnet, and it expects the mint to exist and the wallet balance to be above zero. The freeze test freezes the wallet token account, checks that a transfer fails, thaws it in a `finally` block, then moves 1 USDT (`10^6` base units) out and back. A process kill between freeze and thaw can leave the account frozen; the authority key can thaw it.
 
-Further notes: [../docs/solana.md](../docs/solana.md) and [../docs/security.md](../docs/security.md).
+Further notes: [../docs/solana.md](../docs/solana.md), [../docs/security.md](../docs/security.md), and [../CONTRIBUTING.md](../CONTRIBUTING.md).

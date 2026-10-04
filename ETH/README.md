@@ -1,6 +1,6 @@
 # ETH — Ethereum USDT replica
 
-Local Hardhat package for stablecoin security research. It deploys a copy of mainnet Tether USD (`0xdAC17F958D2ee523a2206206994597C13D831ec7`) and exercises mint (`issue`), redeem, fees, blacklist, pause, and the deprecate path.
+Local Hardhat package for stablecoin security research. It deploys a copy of mainnet Tether USD (`0xdAC17F958D2ee523a2206206994597C13D831ec7`). The contract tests exercise `issue`, `redeem`, fees, blacklist, pause, and the deprecate path. `npm run mint` calls `issue` and then `transfer`.
 
 Scripts call `assertLocalChain` and refuse every chain id other than `31337`.
 
@@ -69,4 +69,4 @@ Environment:
 
 `deployments/` and `scratch/` are local output and are gitignored. The npm scripts cover key creation, deploy, and mint. Redemption is exercised in the contract tests through `redeem`.
 
-Further notes: [../docs/ethereum.md](../docs/ethereum.md) and [../docs/security.md](../docs/security.md).
+Further notes: [../docs/ethereum.md](../docs/ethereum.md), [../docs/security.md](../docs/security.md), and [../CONTRIBUTING.md](../CONTRIBUTING.md).
