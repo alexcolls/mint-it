@@ -8,7 +8,7 @@ The material is research tooling and documentation. It is not financial advice, 
 
 ## Where this work runs
 
-- Local Ethereum chain id `31337` (`npm run node` in `ETH/`). `deploy` and `mint` call `assertLocalChain` and abort on any other chain id. The Hardhat config defines `localhost` as its only network.
+- Local Ethereum chain id `31337` (`pnpm run node` in `ETH/`). `deploy` and `mint` call `assertLocalChain` and abort on any other chain id. The Hardhat config defines `localhost` as its only network.
 - Solana devnet, the default `RPC_URL` (`https://api.devnet.solana.com`). Solana scripts have no cluster-id check. They sign with `keys/authority.json` and submit to the cluster `RPC_URL` names, so set that variable to devnet before `create`, `mint`, `set-uri`, or `test`.
 - Read-only mainnet comparison: Ethereum `eth_getCode` and `eth_call`; Solana `getAccountInfo` and metadata fetches against the published USDT mint.
 
@@ -16,11 +16,11 @@ Live mainnet USDT, other production stablecoins, and any attempt to move, freeze
 
 ## What the tests cover
 
-The behaviors locked in by `ETH/test` and `SOL/tests` are who may mint, how redeem works on the Ethereum contract, pause and freeze, blacklist edges, fee caps, allowance rules, and deprecate forwarding. The Ethereum npm mint script calls `issue` and `transfer`. `redeem` is called from `ETH/test/TetherToken.test.js`. The in-process Ethereum behavior suite runs on Hardhat's built-in network. Parity tests need outbound network access.
+The behaviors locked in by `ETH/test` and `SOL/tests` are who may mint, how redeem works on the Ethereum contract, pause and freeze, blacklist edges, fee caps, allowance rules, and deprecate forwarding. The Ethereum mint script calls `issue` and `transfer`. `redeem` is called from `ETH/test/TetherToken.test.js`. The in-process Ethereum behavior suite runs on Hardhat's built-in network. Parity tests need outbound network access.
 
 ## Keys and local files
 
-Ethereum key files contain a hex private key and a mnemonic. `npm run keys` writes them with mode `0600` under `keys/`, and `test/local-deployment.test.js` checks that mode when the local node is up. Solana key files contain the raw secret-key bytes. The Solana package only reads those files; create them outside the scripts and keep them private on the machine that runs the commands.
+Ethereum key files contain a hex private key and a mnemonic. `pnpm run keys` writes them with mode `0600` under `keys/`, and `test/local-deployment.test.js` checks that mode when the local node is up. Solana key files contain the raw secret-key bytes. The Solana package only reads those files; create them outside the scripts and keep them private on the machine that runs the commands.
 
 Leave key material out of tickets, docs, and chat. The root and package `.gitignore` files already exclude:
 

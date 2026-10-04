@@ -1,6 +1,6 @@
 # Ethereum replica
 
-`ETH/` is an npm package named `minter-eth`. It uses Hardhat 2 and solc `0.4.18` (`package.json`, `hardhat.config.js`). Commands and the setup sequence are in [../ETH/README.md](../ETH/README.md).
+`ETH/` is a package named `minter-eth`, installed with pnpm. It uses Hardhat 2 and solc `0.4.18` (`package.json`, `hardhat.config.js`). Commands and the setup sequence are in [../ETH/README.md](../ETH/README.md).
 
 Part of the reading order in [overview.md](overview.md). Boundaries and key handling are in [security.md](security.md).
 
@@ -8,7 +8,7 @@ Part of the reading order in [overview.md](overview.md). Boundaries and key hand
 
 The Hardhat config defines a single network, `localhost`, whose URL is `RPC_URL` or `http://127.0.0.1:8545`. `lib/common.js` exports `assertLocalChain`. `scripts/deploy.js` and `scripts/mint.js` call it before sending transactions. Any chain id other than `31337` throws.
 
-`npm test` compiles and runs the behavior spec on Hardhat's in-process network. `assertLocalChain` runs in `deploy` and `mint`. The live-node checks in `test/local-deployment.test.js` skip themselves when the provider at `RPC_URL` is unreachable, the chain id is wrong, the deployment file is missing, or the saved address has no code.
+`pnpm test` compiles and runs the behavior spec on Hardhat's in-process network. `assertLocalChain` runs in `deploy` and `mint`. The live-node checks in `test/local-deployment.test.js` skip themselves when the provider at `RPC_URL` is unreachable, the chain id is wrong, the deployment file is missing, or the saved address has no code.
 
 ## Source and compiler
 
@@ -35,7 +35,7 @@ The constructor mints that supply to the deployer and emits no `Transfer`.
 
 ## Scripts
 
-Run these from `ETH/` after `npm install`. The command table is in [../ETH/README.md](../ETH/README.md).
+Run these from `ETH/` after `pnpm install`. The command table is in [../ETH/README.md](../ETH/README.md).
 
 `create-keys.js` creates `keys/` with mode `0700` and writes `keys/owner.json` and `keys/wallet.json` with mode `0600`. It skips a file that already exists. Each file stores `address`, `privateKey`, and `mnemonic`.
 
@@ -43,7 +43,7 @@ Deploy loads the owner key, sets its balance with `hardhat_setBalance` (100 ETH 
 
 Mint reads `AMOUNT` (default `1000000`), parses it with 6 decimals, calls `issue`, then `transfer` to the wallet address. That follows the on-chain shape of an issuance: new tokens land on the owner, and a normal transfer moves them to the recipient. `redeem` is exercised in `test/TetherToken.test.js`, where it burns from the owner balance.
 
-The Hardhat node keeps state in memory. A new `npm run node` drops the contract. Run `deploy` and `mint` again.
+The Hardhat node keeps state in memory. A new `pnpm run node` drops the contract. Run `deploy` and `mint` again.
 
 ## Behaviors the contract tests assert
 
@@ -81,8 +81,8 @@ Forwarded views hide legacy balances. `balanceOf`, `totalSupply`, `transfer`, `a
 
 | File | When it runs | What it needs |
 |---|---|---|
-| `test/TetherToken.test.js` | Every `npm test` | In-process Hardhat network |
-| `test/parity.test.js` | Every `npm test` | HTTPS to mainnet. Timeout 120 seconds. Reads `eth_getCode` and `eth_call` for name, symbol, and decimals |
+| `test/TetherToken.test.js` | Every `pnpm test` | In-process Hardhat network |
+| `test/parity.test.js` | Every `pnpm test` | HTTPS to mainnet. Timeout 120 seconds. Reads `eth_getCode` and `eth_call` for name, symbol, and decimals |
 | `test/local-deployment.test.js` | When the skip conditions above are clear | Timeout 60 seconds. Also checks key file mode `0600`, that each private key and mnemonic derives the stored address, that deployed code matches mainnet after the metadata strip, and that the wallet balance is above zero |
 
 The local-deployment file reads the key material. Run it on a machine where `keys/` holds the local research keys. If the node is up and the deployment file points at code, a missing key file fails the suite at that point.

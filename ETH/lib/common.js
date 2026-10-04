@@ -32,7 +32,7 @@ async function assertLocalChain(provider) {
 }
 
 function readDeployment() {
-  if (!fs.existsSync(DEPLOYMENTS_FILE)) throw new Error('no deployment found, run `npm run deploy` first');
+  if (!fs.existsSync(DEPLOYMENTS_FILE)) throw new Error('no deployment found, run `pnpm run deploy` first');
   return JSON.parse(fs.readFileSync(DEPLOYMENTS_FILE, 'utf8'));
 }
 

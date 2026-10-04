@@ -1,4 +1,4 @@
-// Verifies the live deployment on `npm run node` (localhost:8545). Skipped if it isn't running.
+// Verifies the live deployment on `pnpm run node` (localhost:8545). Skipped if it isn't running.
 const fs = require('node:fs');
 const path = require('node:path');
 const { expect } = require('chai');

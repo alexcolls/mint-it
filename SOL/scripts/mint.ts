@@ -1,4 +1,4 @@
-// Mints USDT replica to the local wallet (keys/wallet.json). Usage: npm run mint -- <amount>
+// Mints USDT replica to the local wallet (keys/wallet.json). Usage: pnpm run mint -- <amount>
 import { getOrCreateAssociatedTokenAccount, mintTo } from '@solana/spl-token';
 import { connection, loadKeypair, toBaseUnits } from '../src/common.ts';
 

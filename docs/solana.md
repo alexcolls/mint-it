@@ -1,6 +1,6 @@
 # Solana replica
 
-`SOL/` is an npm package named `minter`. It talks to Solana with `@solana/web3.js` and `@solana/spl-token`, and it writes Metaplex metadata with `@metaplex-foundation/mpl-token-metadata` and Umi. `tsx` executes the TypeScript sources directly. There is no `tsconfig.json`. The token program is the legacy SPL Token program.
+`SOL/` is a package named `minter`, installed with pnpm. It talks to Solana with `@solana/web3.js` and `@solana/spl-token`, and it writes Metaplex metadata with `@metaplex-foundation/mpl-token-metadata` and Umi. `tsx` executes the TypeScript sources directly. There is no `tsconfig.json`. The token program is the legacy SPL Token program.
 
 Commands and the setup sequence are in [../SOL/README.md](../SOL/README.md). Part of the reading order in [overview.md](overview.md). Boundaries and key handling are in [security.md](security.md).
 
@@ -19,16 +19,16 @@ The local document for the logo JSON is `metadata/usdt.json`. The URL already us
 
 ## Keys and scripts
 
-Run these from `SOL/` after `npm install`. The three files `keys/authority.json`, `keys/mint.json`, and `keys/wallet.json` must already exist. Each is a Solana keypair JSON array. This package has no key-generation script; the scripts only load the files. Create them with the Solana CLI as shown in [../CONTRIBUTING.md](../CONTRIBUTING.md), and fund the authority account with devnet SOL. Rent for the mint and transaction fees are paid by that key.
+Run these from `SOL/` after `pnpm install`. The three files `keys/authority.json`, `keys/mint.json`, and `keys/wallet.json` must already exist. Each is a Solana keypair JSON array. This package has no key-generation script; the scripts only load the files. Create them with the Solana CLI as shown in [../CONTRIBUTING.md](../CONTRIBUTING.md), and fund the authority account with devnet SOL. Rent for the mint and transaction fees are paid by that key.
 
-| npm script | What it runs |
+| Script | What it runs |
 |---|---|
-| `npm run create` | `tsx scripts/create-usdt.ts` |
-| `npm run mint` | `tsx scripts/mint.ts` |
-| `npm run set-uri` | `tsx scripts/set-uri.ts` |
-| `npm test` | `tsx --test tests/*.test.ts` |
+| `pnpm run create` | `tsx scripts/create-usdt.ts` |
+| `pnpm run mint` | `tsx scripts/mint.ts` |
+| `pnpm run set-uri` | `tsx scripts/set-uri.ts` |
+| `pnpm test` | `tsx --test tests/*.test.ts` |
 
-`mint.ts` reads the amount from the first argument (`npm run mint -- 5000`). The default is `1000000`. Amounts are converted with `toBaseUnits`, which rejects more than 6 decimal places. The script creates the wallet's associated token account if needed and then `mintTo`s. There is no redeem script in this package.
+`mint.ts` reads the amount from the first argument (`pnpm run mint -- 5000`). The default is `1000000`. Amounts are converted with `toBaseUnits`, which rejects more than 6 decimal places. The script creates the wallet's associated token account if needed and then `mintTo`s. There is no redeem script in this package.
 
 `set-uri.ts` requires a URL argument. It fetches that URL, requires an HTTP success, and requires a JSON object with an `image` value. It then `updateV1`s the metadata.
 
@@ -51,7 +51,7 @@ The connection uses commitment `confirmed`. `RPC_URL` selects the cluster. The s
 
 ## What the tests check
 
-`tests/usdt.test.ts` is an integration suite against the configured RPC, with mainnet used as a read-only reference. The file calls `loadKeypair` at import time, so `npm test` exits before the tests run when any of the three key files is missing. It expects the mint account to exist and the wallet balance to be above zero.
+`tests/usdt.test.ts` is an integration suite against the configured RPC, with mainnet used as a read-only reference. The file calls `loadKeypair` at import time, so `pnpm test` exits before the tests run when any of the three key files is missing. It expects the mint account to exist and the wallet balance to be above zero.
 
 - The replica mint is owned by the legacy token program, has the same data length as mainnet USDT, 6 decimals, and the local authority as both mint and freeze authority. The test also checks that mainnet USDT's freeze authority equals its mint authority.
 - Metadata name, symbol, seller fee, mutability, primary sale flag, creators, and collection match mainnet. `uri` is allowed to differ. The update authority is the local authority.

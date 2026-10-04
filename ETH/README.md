@@ -1,10 +1,10 @@
 # ETH — Ethereum USDT replica
 
-Local Hardhat package for stablecoin security research. It deploys a copy of mainnet Tether USD (`0xdAC17F958D2ee523a2206206994597C13D831ec7`). The contract tests exercise `issue`, `redeem`, fees, blacklist, pause, and the deprecate path. `npm run mint` calls `issue` and then `transfer`.
+Local Hardhat package for stablecoin security research. It deploys a copy of mainnet Tether USD (`0xdAC17F958D2ee523a2206206994597C13D831ec7`). The contract tests exercise `issue`, `redeem`, fees, blacklist, pause, and the deprecate path. `pnpm run mint` calls `issue` and then `transfer`.
 
 Scripts call `assertLocalChain` and refuse every chain id other than `31337`.
 
-Package name: `minter-eth`. Dependencies come from npm (`package-lock.json`).
+Package name: `minter-eth`. Install dependencies with pnpm.
 
 ## Parity with mainnet
 
@@ -31,25 +31,25 @@ The trailing 32-byte bzzr0 metadata hash differs. That hash covers Tether's orig
 - `transferOwnership` to the zero address leaves the owner unchanged and emits no log. A successful handover also emits no log. Afterward, `issue` credits the new owner.
 - `deprecate` forwards `balanceOf`, `totalSupply`, `transfer`, `approve`, `transferFrom`, and `allowance` to the upgraded contract. Legacy blacklist and pause still apply before the forward. Legacy `issue` and `redeem` keep writing the pre-deprecation ledger. The stand-in upgrade is `contracts/test/UpgradedTokenMock.sol`.
 
-`test/parity.test.js` reads Ethereum mainnet (`eth_getCode`, `eth_call`) and compares bytecode and `name` / `symbol` / `decimals`. `test/local-deployment.test.js` runs only when `npm run node` is up, a deployment file exists, and the wallet already holds a balance.
+`test/parity.test.js` reads Ethereum mainnet (`eth_getCode`, `eth_call`) and compares bytecode and `name` / `symbol` / `decimals`. `test/local-deployment.test.js` runs only when `pnpm run node` is up, a deployment file exists, and the wallet already holds a balance.
 
 ## Keys
 
-`npm run keys` writes `keys/owner.json` (issuer, admin, fee recipient) and `keys/wallet.json` (recipient of the minted balance). Each file stores `address`, `privateKey`, and `mnemonic` with mode `0600`. Existing files are left in place. The directory is gitignored.
+`pnpm run keys` writes `keys/owner.json` (issuer, admin, fee recipient) and `keys/wallet.json` (recipient of the minted balance). Each file stores `address`, `privateKey`, and `mnemonic` with mode `0600`. Existing files are left in place. The directory is gitignored.
 
 On deploy, the script funds the owner with test ETH through `hardhat_setBalance`. That call exists only on the Hardhat node.
 
 ## Setup and commands
 
-Requirements: Node.js and npm. Install from this directory so `package-lock.json` is the lockfile.
+Requirements: Node.js and pnpm. Install from this directory.
 
 ```bash
-npm install
-npm run keys
-npm run node
-npm run deploy
-AMOUNT=5000 npm run mint
-npm test
+pnpm install
+pnpm run keys
+pnpm run node
+pnpm run deploy
+AMOUNT=5000 pnpm run mint
+pnpm test
 ```
 
 | Script | Command | Role |
@@ -67,6 +67,6 @@ Environment:
 - `RPC_URL` — Hardhat network URL. Default `http://127.0.0.1:8545`.
 - `MAINNET_RPC_URL` — read-only endpoint for parity. Default `https://ethereum-rpc.publicnode.com`.
 
-`deployments/` and `scratch/` are local output and are gitignored. The npm scripts cover key creation, deploy, and mint. Redemption is exercised in the contract tests through `redeem`.
+`deployments/` and `scratch/` are local output and are gitignored. The package scripts cover key creation, deploy, and mint. Redemption is exercised in the contract tests through `redeem`.
 
 Further notes: [../docs/ethereum.md](../docs/ethereum.md), [../docs/security.md](../docs/security.md), and [../CONTRIBUTING.md](../CONTRIBUTING.md).

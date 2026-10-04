@@ -23,18 +23,18 @@ This is defensive security research. A change that targets a live mainnet system
 
 ## Set up the Ethereum package
 
-`ETH/` is an npm package (`package-lock.json`, lockfileVersion 3). From `ETH/`:
+`ETH/` is installed with pnpm. From `ETH/`:
 
 ```bash
-npm install
-npm run keys                      # keys/owner.json and keys/wallet.json (idempotent)
-npm run node                      # terminal 1: Hardhat node at 127.0.0.1:8545
-npm run deploy                    # terminal 2: deploy TetherToken
-AMOUNT=5000 npm run mint          # owner issue(), then transfer to the local wallet
-npm test                          # behavior, mainnet bytecode parity, local deployment
+pnpm install
+pnpm run keys                      # keys/owner.json and keys/wallet.json (idempotent)
+pnpm run node                      # terminal 1: Hardhat node at 127.0.0.1:8545
+pnpm run deploy                    # terminal 2: deploy TetherToken
+AMOUNT=5000 pnpm run mint          # owner issue(), then transfer to the local wallet
+pnpm test                          # behavior, mainnet bytecode parity, local deployment
 ```
 
-`npm run keys` writes `keys/owner.json` and `keys/wallet.json` with mode `0600` and skips a file that already exists. `npm run deploy` and `npm run mint` call `assertLocalChain` and throw on every chain id other than `31337`. `npm run mint` calls `issue` and then `transfer`. Redemption is covered by `ETH/test/TetherToken.test.js` through `redeem`. The Hardhat node is in-memory, so a restart needs `deploy` and `mint` again.
+`pnpm run keys` writes `keys/owner.json` and `keys/wallet.json` with mode `0600` and skips a file that already exists. `pnpm run deploy` and `pnpm run mint` call `assertLocalChain` and throw on every chain id other than `31337`. `pnpm run mint` calls `issue` and then `transfer`. Redemption is covered by `ETH/test/TetherToken.test.js` through `redeem`. The Hardhat node is in-memory, so a restart needs `deploy` and `mint` again.
 
 `RPC_URL` defaults to `http://127.0.0.1:8545`. `MAINNET_RPC_URL` defaults to `https://ethereum-rpc.publicnode.com` and is used for read-only parity. `AMOUNT` defaults to `1000000`.
 
@@ -42,7 +42,7 @@ Details: [ETH/README.md](ETH/README.md) and [docs/ethereum.md](docs/ethereum.md)
 
 ## Set up the Solana package
 
-`SOL/` is an npm package (`package-lock.json`, lockfileVersion 3). Scripts run through `tsx`. There is no key-generation script. The three files `keys/authority.json`, `keys/mint.json`, and `keys/wallet.json` must already exist as Solana keypair JSON arrays (the format `Keypair.fromSecretKey` reads). From `SOL/`, the Solana CLI can create them:
+`SOL/` is installed with pnpm. Scripts run through `tsx`. There is no key-generation script. The three files `keys/authority.json`, `keys/mint.json`, and `keys/wallet.json` must already exist as Solana keypair JSON arrays (the format `Keypair.fromSecretKey` reads). From `SOL/`, the Solana CLI can create them:
 
 ```bash
 mkdir -p keys
@@ -54,14 +54,14 @@ solana-keygen new --outfile keys/wallet.json --no-bip39-passphrase
 Fund the authority account with devnet SOL, then:
 
 ```bash
-npm install
-npm run create                    # create the devnet mint and Metaplex metadata (idempotent)
-npm run mint -- 5000              # mint 5000 USDT to keys/wallet.json
-npm run set-uri -- <metadata-url>
-npm test                          # devnet checks; mainnet is read for parity
+pnpm install
+pnpm run create                    # create the devnet mint and Metaplex metadata (idempotent)
+pnpm run mint -- 5000              # mint 5000 USDT to keys/wallet.json
+pnpm run set-uri -- <metadata-url>
+pnpm test                          # devnet checks; mainnet is read for parity
 ```
 
-`npm run mint` defaults to `1000000` when the amount argument is omitted. Amounts with more than 6 decimal places are rejected. `RPC_URL` defaults to `https://api.devnet.solana.com`. The scripts sign with `keys/authority.json` and submit to whatever cluster `RPC_URL` names, so leave that variable on devnet. `MAINNET_RPC_URL` defaults to `https://api.mainnet-beta.solana.com` and is used for read-only parity. `npm test` loads the three key files at startup, so a missing file fails before the tests run.
+`pnpm run mint` defaults to `1000000` when the amount argument is omitted. Amounts with more than 6 decimal places are rejected. `RPC_URL` defaults to `https://api.devnet.solana.com`. The scripts sign with `keys/authority.json` and submit to whatever cluster `RPC_URL` names, so leave that variable on devnet. `MAINNET_RPC_URL` defaults to `https://api.mainnet-beta.solana.com` and is used for read-only parity. `pnpm test` loads the three key files at startup, so a missing file fails before the tests run.
 
 Details: [SOL/README.md](SOL/README.md) and [docs/solana.md](docs/solana.md).
 
@@ -91,7 +91,7 @@ Match the file you are editing. The repository has no Prettier, ESLint, Solhint,
 - Include tests when behavior changes. Ethereum behavior belongs in `ETH/test/`. Solana devnet checks belong in `SOL/tests/`.
 - Update the docs when a command, environment variable, or the research scope changes. That usually means the root [README.md](README.md), the package README, and the matching file under `docs/`.
 - Preferred commit messages follow Conventional Commits. Use a type such as `feat`, `fix`, `docs`, `test`, `refactor`, or `chore`, an optional scope such as `eth` or `sol`, and a short description. Example: `docs: add a contribution guide`.
-- Let git hooks run. Install dependencies with npm inside the package you touched, using the committed `package-lock.json`.
+- Let git hooks run. Install dependencies with pnpm inside the package you touched.
 
 `ETH/` and `SOL/` are directories of this repository, and their source files are already in the parent history. Run git from the repository root so new files are recorded here. This working tree has a single `.git`, at the root.
 

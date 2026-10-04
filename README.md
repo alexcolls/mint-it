@@ -35,7 +35,7 @@ Each package has its own README:
 
 ## Prerequisites
 
-- Node.js and npm. Both packages ship `package-lock.json` (npm lockfile version 3). Install dependencies with npm in the package you are running.
+- Node.js and pnpm. Install dependencies with pnpm in the package you are running.
 - For `ETH/`: a free local port `8545`. Scripts refuse every chain id other than `31337`.
 - For `SOL/`: the three keypair files described in the Solana README, and devnet SOL on the authority account for rent and fees.
 - Outbound HTTPS for parity tests, which read public mainnet RPC endpoints.
@@ -45,29 +45,29 @@ Each package has its own README:
 From `ETH/`:
 
 ```bash
-npm install
-npm run keys                      # keys/owner.json and keys/wallet.json (idempotent)
-npm run node                      # terminal 1: Hardhat node at 127.0.0.1:8545
-npm run deploy                    # terminal 2: deploy TetherToken
-AMOUNT=5000 npm run mint          # owner issue(), then transfer to the local wallet
-npm test                          # behavior, mainnet bytecode parity, local deployment
+pnpm install
+pnpm run keys                      # keys/owner.json and keys/wallet.json (idempotent)
+pnpm run node                      # terminal 1: Hardhat node at 127.0.0.1:8545
+pnpm run deploy                    # terminal 2: deploy TetherToken
+AMOUNT=5000 pnpm run mint          # owner issue(), then transfer to the local wallet
+pnpm test                          # behavior, mainnet bytecode parity, local deployment
 ```
 
-`npm run mint` defaults to `1000000` USDT when `AMOUNT` is unset. The Hardhat node is in-memory. After a restart, run `deploy` and `mint` again.
+`pnpm run mint` defaults to `1000000` USDT when `AMOUNT` is unset. The Hardhat node is in-memory. After a restart, run `deploy` and `mint` again.
 
 ## Run the Solana replica
 
 From `SOL/`:
 
 ```bash
-npm install
-npm run create                    # create the devnet mint and Metaplex metadata (idempotent)
-npm run mint -- 5000              # mint 5000 USDT to keys/wallet.json
-npm run set-uri -- <metadata-url>
-npm test                          # devnet checks; mainnet is read for parity
+pnpm install
+pnpm run create                    # create the devnet mint and Metaplex metadata (idempotent)
+pnpm run mint -- 5000              # mint 5000 USDT to keys/wallet.json
+pnpm run set-uri -- <metadata-url>
+pnpm test                          # devnet checks; mainnet is read for parity
 ```
 
-`npm run mint` defaults to `1000000` when the amount argument is omitted. `RPC_URL` selects the cluster and defaults to `https://api.devnet.solana.com`.
+`pnpm run mint` defaults to `1000000` when the amount argument is omitted. `RPC_URL` selects the cluster and defaults to `https://api.devnet.solana.com`.
 
 ## Safety
 

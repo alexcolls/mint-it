@@ -2,7 +2,7 @@
 
 Devnet SPL token used for stablecoin security research. The mint follows the on-chain shape of mainnet Tether USD (`Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB`): legacy Token program, 6 decimals, and one key for mint, freeze, and metadata update authority.
 
-Package name: `minter`. Dependencies come from npm (`package-lock.json`). Scripts run through `tsx`, which loads the TypeScript sources directly. The client uses the legacy SPL Token program.
+Package name: `minter`. Install dependencies with pnpm. Scripts run through `tsx`, which loads the TypeScript sources directly. The client uses the legacy SPL Token program.
 
 ## Parity with mainnet
 
@@ -13,7 +13,7 @@ Package name: `minter`. Dependencies come from npm (`package-lock.json`). Script
 | Mint, freeze, and update authority | One key | One key, `keys/authority.json` |
 | Metadata | name `USDT`, symbol `USDT`, uri empty, 0 seller fee, no creators, mutable | Same fields at creation |
 
-`src/common.ts` sets `uri` to an empty string, matching mainnet. `npm run set-uri` can point the mint at a hosted JSON afterward so wallets that read Metaplex metadata can load a logo. A copy of that JSON lives in [`metadata/usdt.json`](metadata/usdt.json). The hosted file used for this replica is:
+`src/common.ts` sets `uri` to an empty string, matching mainnet. `pnpm run set-uri` can point the mint at a hosted JSON afterward so wallets that read Metaplex metadata can load a logo. A copy of that JSON lives in [`metadata/usdt.json`](metadata/usdt.json). The hosted file used for this replica is:
 
 https://gist.githubusercontent.com/alexcolls/2634ef14ab71dd2eb441a25574dea4a4/raw/usdt.json
 
@@ -41,14 +41,14 @@ This package only loads keys. Generate the three files with the Solana CLI befor
 
 ## Setup and commands
 
-Requirements: Node.js and npm. Install from this directory.
+Requirements: Node.js and pnpm. Install from this directory.
 
 ```bash
-npm install
-npm run create
-npm run mint -- 5000
-npm run set-uri -- https://gist.githubusercontent.com/alexcolls/2634ef14ab71dd2eb441a25574dea4a4/raw/usdt.json
-npm test
+pnpm install
+pnpm run create
+pnpm run mint -- 5000
+pnpm run set-uri -- https://gist.githubusercontent.com/alexcolls/2634ef14ab71dd2eb441a25574dea4a4/raw/usdt.json
+pnpm test
 ```
 
 | Script | Command | Role |
@@ -65,6 +65,6 @@ Environment:
 
 `RPC_URL` selects the cluster. Leave it on the devnet default when you run these commands. The scripts sign with `keys/authority.json` and submit to the cluster that variable names.
 
-`npm test` loads the three key files at startup, so a missing file fails before any test runs. It talks to devnet, and it expects the mint to exist and the wallet balance to be above zero. The freeze test freezes the wallet token account, checks that a transfer fails, thaws it in a `finally` block, then moves 1 USDT (`10^6` base units) out and back. A process kill between freeze and thaw can leave the account frozen; the authority key can thaw it.
+`pnpm test` loads the three key files at startup, so a missing file fails before any test runs. It talks to devnet, and it expects the mint to exist and the wallet balance to be above zero. The freeze test freezes the wallet token account, checks that a transfer fails, thaws it in a `finally` block, then moves 1 USDT (`10^6` base units) out and back. A process kill between freeze and thaw can leave the account frozen; the authority key can thaw it.
 
 Further notes: [../docs/solana.md](../docs/solana.md), [../docs/security.md](../docs/security.md), and [../CONTRIBUTING.md](../CONTRIBUTING.md).

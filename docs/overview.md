@@ -22,7 +22,7 @@ The Solana package creates a legacy SPL token mint on devnet with the same decim
 The scripts and tests concentrate on issuer control and on integration hazards that show up when a stablecoin keeps an older token interface.
 
 1. **Mint authority.** On Ethereum, `issue` is `onlyOwner` and increases the owner balance and `_totalSupply`. On Solana, `mintTo` must be signed by the mint authority. Tests reject a signer who lacks that role.
-2. **Redeem.** On Ethereum, `redeem` decreases the owner balance and total supply, and it reverts when the owner balance is too small. Holder balances elsewhere stay put. The contract tests call `redeem`. The npm mint script calls `issue` and then `transfer`. The Solana scripts cover minting.
+2. **Redeem.** On Ethereum, `redeem` decreases the owner balance and total supply, and it reverts when the owner balance is too small. Holder balances elsewhere stay put. The contract tests call `redeem`. The mint script calls `issue` and then `transfer`. The Solana scripts cover minting.
 3. **Pause and freeze.** Ethereum `pause` stops transfers and `transferFrom` while leaving `approve` and `issue` available. Solana freeze, held by the same key as the mint authority, blocks transfers from a frozen token account until thaw.
 4. **Blacklist and seizure.** Ethereum can block an address from sending and can `destroyBlackFunds` on a blacklisted balance. The tests record the edges: a blacklisted address can still receive and approve, and a blacklisted spender can still spend an existing allowance.
 5. **Fees.** Ethereum `setParams` turns on a transfer fee paid to the owner, inside a hard cap (basis points below 20, max fee below 50 USDT).
@@ -48,8 +48,8 @@ Treat the replicas as instruments for the behaviors listed above. Supply figures
 
 ## How the packages fit together
 
-`ETH/` and `SOL/` are separate npm projects aimed at the same research target: USDT's public mint and admin model. Each package has its own scripts, tests, and dependencies. Both are versioned from the repository root.
+`ETH/` and `SOL/` are separate packages aimed at the same research target: USDT's public mint and admin model. Each package has its own scripts, tests, and dependencies, and each one is installed with pnpm. Both are versioned from the repository root.
 
-Ethereum key files are `{address, privateKey, mnemonic}` objects created by `npm run keys`. Solana key files are JSON secret-key arrays. The Solana package has no key-generation script; create those files before `npm run create`, as described in [../CONTRIBUTING.md](../CONTRIBUTING.md).
+Ethereum key files are `{address, privateKey, mnemonic}` objects created by `pnpm run keys`. Solana key files are JSON secret-key arrays. The Solana package has no key-generation script; create those files before `pnpm run create`, as described in [../CONTRIBUTING.md](../CONTRIBUTING.md).
 
 Command sequences live in the root [README](../README.md) and in each package README. Environment variables, chain guards, and test coverage are in [ethereum.md](ethereum.md) and [solana.md](solana.md).

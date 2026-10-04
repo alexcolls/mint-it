@@ -1,5 +1,5 @@
 // Mints USDT to keys/wallet.json the way Tether does: owner issue()s into its own
-// balance, then transfers to the recipient. Usage: AMOUNT=5000 npm run mint
+// balance, then transfers to the recipient. Usage: AMOUNT=5000 pnpm run mint
 const hre = require('hardhat');
 const { assertLocalChain, loadWallet, readDeployment } = require('../lib/common');
 
