@@ -1,0 +1,29 @@
+{
+  "name": "minter",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "create": "tsx scripts/create-usdt.ts",
+    "mint": "tsx scripts/mint.ts",
+    "test": "tsx --test tests/*.test.ts",
+    "set-uri": "tsx scripts/set-uri.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "@metaplex-foundation/mpl-token-metadata": "^3.4.0",
+    "@metaplex-foundation/umi": "^1.6.0",
+    "@metaplex-foundation/umi-bundle-defaults": "^1.6.0",
+    "@metaplex-foundation/umi-web3js-adapters": "^1.6.0",
+    "@solana/spl-token": "^0.4.15",
+    "@solana/web3.js": "^1.99.0",
+    "bs58": "^6.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.4",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3"
+  }
+}
