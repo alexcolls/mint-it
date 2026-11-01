@@ -23,6 +23,9 @@ keys/
 deployments/
 scratch/
 
+# Solana local mainnet fork: snapshot, fork authority key, validator ledger.
+SOL/fork/
+
 # Node / TypeScript build output.
 dist/
 build/

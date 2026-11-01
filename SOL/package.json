@@ -6,7 +6,10 @@
     "create": "tsx scripts/create-usdt.ts",
     "mint": "tsx scripts/mint.ts",
     "test": "tsx --test tests/*.test.ts",
-    "set-uri": "tsx scripts/set-uri.ts"
+    "set-uri": "tsx scripts/set-uri.ts",
+    "fork:snapshot": "tsx scripts/fork-snapshot.ts",
+    "fork:node": "tsx scripts/fork-node.ts",
+    "fork:test": "tsx --test tests/fork/*.test.ts"
   },
   "keywords": [],
   "author": "",

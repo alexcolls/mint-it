@@ -21,6 +21,9 @@ secrets.json
 # Solana keypair files (JSON byte arrays): authority.json, mint.json, wallet.json.
 keys/
 
+# Local mainnet fork: snapshot accounts, manifest, fork authority key, validator ledger.
+/fork/
+
 # TypeScript / Node build output. There is no tsconfig; tsx runs the sources directly.
 dist/
 build/
