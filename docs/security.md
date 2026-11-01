@@ -10,9 +10,11 @@ The material is research tooling and documentation. It is not financial advice, 
 
 - Local Ethereum chain id `31337` (`pnpm run node` in `ETH/`). `deploy` and `mint` call `assertLocalChain` and abort on any other chain id. The Hardhat config defines `localhost` as its only network.
 - Solana devnet, the default `RPC_URL` (`https://api.devnet.solana.com`). Solana scripts have no cluster-id check. They sign with `keys/authority.json` and submit to the cluster `RPC_URL` names, so set that variable to devnet before `create`, `mint`, `set-uri`, or `test`.
+- Local Solana fork (`pnpm run fork:node` in `SOL/`): a `solana-test-validator` whose genesis holds a mainnet USDT snapshot, with the mint and freeze authority swapped for a throwaway key. The fork tests connect through `connectFork`, which refuses a non-loopback `FORK_RPC_URL` and any validator whose genesis hash is mainnet, devnet, or testnet. The validator's RPC (8899, 8900) and faucet (9900) ports listen on all interfaces.
 - Read-only mainnet comparison: Ethereum `eth_getCode` and `eth_call`; Solana `getAccountInfo` and metadata fetches against the published USDT mint.
+- Read-only mainnet snapshot for the fork: `getMultipleAccounts` at one slot, plus `getTokenLargestAccounts` or `getSignaturesForAddress` and `getTransaction` to pick holder accounts. The snapshot script signs nothing.
 
-Live mainnet USDT, other production stablecoins, and any attempt to move, freeze, or confuse balances on a network where third parties hold funds are outside this research. A balance minted here is a test balance.
+Live mainnet USDT, other production stablecoins, and any attempt to move, freeze, or confuse balances on a network where third parties hold funds are outside this research. A balance minted here is a test balance. That includes the fork: its mint carries the real USDT address and real holder balances, but it exists only in the local validator.
 
 ## What the tests cover
 

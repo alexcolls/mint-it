@@ -45,7 +45,10 @@ Replacing `keys/mint.json` changes the mint address. `create` skips creation whe
 | Variable | Used by | Default |
 |---|---|---|
 | `RPC_URL` | Scripts and the devnet side of the tests | `https://api.devnet.solana.com` |
-| `MAINNET_RPC_URL` | Read-only parity connection inside `tests/usdt.test.ts` | `https://api.mainnet-beta.solana.com` |
+| `MAINNET_RPC_URL` | Read-only parity connection inside `tests/usdt.test.ts`, and the fork snapshot source | `https://api.mainnet-beta.solana.com` |
+| `FORK_RPC_URL` | Fork tests; must be a loopback host | `http://127.0.0.1:8899` |
+| `FORK_HOLDERS` | Fork snapshot: comma-separated token accounts or wallets to clone | unset |
+| `FORK_HOLDER_COUNT` | Fork snapshot: holders to pick when `FORK_HOLDERS` is unset | `5` |
 
 The connection uses commitment `confirmed`. `RPC_URL` selects the cluster. The scripts sign with the local authority and submit to the cluster that variable names. Leave `RPC_URL` on devnet for this research. The Ethereum package's chain-id guard is documented in [ethereum.md](ethereum.md).
 
@@ -60,6 +63,26 @@ The connection uses commitment `confirmed`. `RPC_URL` selects the cluster. The s
 - The freeze authority can freeze the wallet account. A transfer simulation fails while it is frozen. Thaw runs in a `finally` block, so an assertion failure still thaws. The test then moves 1 USDT (`10^6` base units) to the authority's associated account and back, so the wallet balance is unchanged at the end.
 
 A killed process can still stop between freeze and thaw and leave the wallet token account frozen. The authority key can thaw it.
+
+## Local mainnet fork
+
+`scripts/fork-snapshot.ts` reads the USDT mint, its Metaplex metadata account, and a set of holder token accounts from mainnet in one `getMultipleAccounts` call, so every balance comes from the same slot. It rewrites the mint's authority fields to `fork/authority.json` and writes each account in the `solana account --output json` format to `fork/accounts/`. `fork/manifest.json` records the slot, supply, Tether's authority, and the holder balances. `scripts/fork-node.ts` starts `solana-test-validator --reset --account-dir fork/accounts` with the fork authority as the genesis SOL recipient. Usage and holder selection are in [../SOL/README.md](../SOL/README.md#local-mainnet-fork).
+
+The fork has the real mint address, supply, and the cloned balances, but no transaction history. Genesis holds accounts, not ledger entries.
+
+`tests/fork/usdt-fork.test.ts` checks, against the fork only:
+
+- The mint is owned by the legacy token program, and its supply and decimals equal the snapshot.
+- The mint and freeze authority are the fork key. Tether's key, as recorded, was both on mainnet.
+- The metadata account is the unpatched mainnet copy: name `USDT`, symbol `USDT`, update authority still Tether's key.
+- Every cloned holder account has its snapshot owner, balance, and frozen flag.
+- A mint signed by Tether's mainnet key fails with `OwnerMismatch` (SPL Token error 4). That check is a simulation without signature verification, since nobody here holds the key.
+- A freshly generated key that does sign still fails to mint or freeze with `OwnerMismatch`.
+- The fork authority mints 1,000,000 USDT on top of the real supply, then burns it, and the supply returns to the snapshot value.
+- A simulated `mintTo` credits a real holder account directly; the simulated post-state shows the higher balance.
+- Freezing a real holder account makes the holder's own transfer fail with `AccountFrozen` (error 17). Thaw runs in a `finally` block, and the same transfer succeeds afterwards. The holder transfers are simulations without signature verification.
+
+`pnpm test` does not include the fork suite: its glob `tests/*.test.ts` does not descend into `tests/fork/`.
 
 ## Research limits on this chain
 

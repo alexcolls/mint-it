@@ -17,7 +17,7 @@ Useful changes include:
 - Tests for mint, redeem, pause, blacklist, freeze, fees, allowances, and the Ethereum `deprecate` path
 - Replica accuracy: bytecode, account layout, and metadata comparisons that read public mainnet endpoints
 - Documentation when a command, environment variable, or the research scope changes
-- Scripts that deploy and sign only on the local Hardhat chain (chain id `31337`) or on Solana devnet
+- Scripts that deploy and sign only on the local Hardhat chain (chain id `31337`), on Solana devnet, or on the local Solana fork validator
 
 This is defensive security research. A change that targets a live mainnet system, moves third-party funds, or ships an exploit procedure against a production stablecoin is outside the project. Collateral, oracle, and peg machinery are unrepresented in this tree; a pull request should keep that scope unless the documentation is updated in the same change to say what was added.
 
@@ -67,11 +67,12 @@ Details: [SOL/README.md](SOL/README.md) and [docs/solana.md](docs/solana.md).
 
 ## Secrets
 
-Leave these untracked. The root `.gitignore` lists all of them. `ETH/.gitignore` repeats the Ethereum paths, and `SOL/.gitignore` repeats `keys/` and the environment-file patterns:
+Leave these untracked. The root `.gitignore` lists all of them. `ETH/.gitignore` repeats the Ethereum paths, and `SOL/.gitignore` repeats `keys/`, `fork/`, and the environment-file patterns:
 
 - `keys/` (Ethereum private keys and mnemonics; Solana secret-key arrays)
 - `.env` and `.env.*`
 - `ETH/deployments/` (local contract address, owner address, deploy transaction hash)
+- `SOL/fork/` (mainnet snapshot, fork authority secret key, validator ledger)
 - `scratch/`
 - `*.pem`, `*.p12`, `secrets.json`, and `.secret`
 

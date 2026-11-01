@@ -37,7 +37,7 @@ Each package has its own README:
 
 - Node.js and pnpm. Install dependencies with pnpm in the package you are running.
 - For `ETH/`: a free local port `8545`. Scripts refuse every chain id other than `31337`.
-- For `SOL/`: the three keypair files described in the Solana README, and devnet SOL on the authority account for rent and fees.
+- For `SOL/`: the three keypair files described in the Solana README, and devnet SOL on the authority account for rent and fees. The local mainnet fork needs the Solana (Agave) CLI for `solana-test-validator` instead.
 - Outbound HTTPS for parity tests, which read public mainnet RPC endpoints.
 
 ## Run the Ethereum replica
@@ -69,9 +69,19 @@ pnpm test                          # devnet checks; mainnet is read for parity
 
 `pnpm run mint` defaults to `1000000` when the amount argument is omitted. `RPC_URL` selects the cluster and defaults to `https://api.devnet.solana.com`.
 
+To study mainnet USDT's real state locally, snapshot it into a `solana-test-validator` fork:
+
+```bash
+pnpm run fork:snapshot             # read the mint, metadata, and holder accounts from mainnet
+pnpm run fork:node                 # terminal 1: local validator with that snapshot as genesis
+pnpm run fork:test                 # terminal 2: authority, mint, and freeze checks on the fork
+```
+
+The fork swaps Tether's mint and freeze authority for a local throwaway key. Account balances carry over; transaction history does not. Details are in [SOL/README.md](SOL/README.md#local-mainnet-fork).
+
 ## Safety
 
-This repository is defensive security research for a local Hardhat chain and Solana devnet. Keep mainnet use to the read-only parity checks already in the tests.
+This repository is defensive security research for a local Hardhat chain, Solana devnet, and a local Solana fork. Keep mainnet use to read-only calls: the parity checks in the tests and the fork snapshot.
 
 The material is research tooling and documentation. It is not financial advice, and it is not an invitation or a procedure for attacking live stablecoin systems. Details are in [docs/security.md](docs/security.md).
 

@@ -57,6 +57,9 @@ pnpm test
 | `mint` | `tsx scripts/mint.ts` | `mintTo` the wallet associated-token account. Argument is a human amount; default `1000000` |
 | `set-uri` | `tsx scripts/set-uri.ts` | Set metadata `uri` after fetching the URL. The JSON must include an `image` field |
 | `test` | `tsx --test tests/*.test.ts` | Devnet integration tests. Mainnet is read for account and metadata parity |
+| `fork:snapshot` | `tsx scripts/fork-snapshot.ts` | Read the mainnet USDT mint, metadata, and holder accounts into `fork/` |
+| `fork:node` | `tsx scripts/fork-node.ts` | Start `solana-test-validator` with that snapshot as genesis |
+| `fork:test` | `tsx --test tests/fork/*.test.ts` | Authority, mint, and freeze checks against the fork |
 
 Environment:
 
@@ -66,5 +69,27 @@ Environment:
 `RPC_URL` selects the cluster. Leave it on the devnet default when you run these commands. The scripts sign with `keys/authority.json` and submit to the cluster that variable names.
 
 `pnpm test` loads the three key files at startup, so a missing file fails before any test runs. It talks to devnet, and it expects the mint to exist and the wallet balance to be above zero. The freeze test freezes the wallet token account, checks that a transfer fails, thaws it in a `finally` block, then moves 1 USDT (`10^6` base units) out and back. A process kill between freeze and thaw can leave the account frozen; the authority key can thaw it.
+
+## Local mainnet fork
+
+Real mainnet USDT state loaded into a local `solana-test-validator`. The snapshot only reads mainnet. Every transaction goes to the local validator. Requires the Solana (Agave) CLI on `PATH`; the devnet key files are not used.
+
+```bash
+pnpm run fork:snapshot             # read mint, metadata, and holder accounts from mainnet into fork/
+pnpm run fork:node                 # terminal 1: solana-test-validator with that snapshot as genesis
+pnpm run fork:test                 # terminal 2: authority, mint, and freeze checks on the fork
+```
+
+The snapshot is taken at one slot and holds:
+
+- The mint account at the real address `Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB`, with its mainnet supply and decimals. Its mint and freeze authority are replaced with `fork/authority.json`, a throwaway key the script creates (mode `0600`). Tether's key is recorded in `fork/manifest.json`.
+- The Metaplex metadata account, unchanged. Its update authority stays Tether's key.
+- Holder token accounts with their balances. `FORK_HOLDERS` takes a comma-separated list of token accounts or wallets; a wallet maps to its USDT associated token account. Without it, the script asks for the largest accounts (`FORK_HOLDER_COUNT`, default 5). The public endpoint refuses that call, so the script falls back to non-empty accounts from the mint's recent transactions. That fallback skips transactions newer than v0, which `@solana/web3.js` v1 cannot decode.
+
+Transaction history cannot be carried over. A validator's genesis holds account state only, so the fork starts at the snapshot with no earlier transactions. Accounts outside the snapshot do not exist on the fork, so the cloned balances add up to less than the supply.
+
+`fork:node` resets `fork/ledger` on every start and gives the fork authority the genesis SOL. Extra flags pass through to the validator: `pnpm run fork:node -- --quiet`. `solana-test-validator` listens for RPC (8899, 8900) and its faucet (9900) on all interfaces, even with `--bind-address 127.0.0.1`. Block those ports on an untrusted network.
+
+`fork:test` connects through `FORK_RPC_URL` (default `http://127.0.0.1:8899`). It refuses a host other than loopback and a validator whose genesis hash is mainnet, devnet, or testnet. Checks that act as a key nobody holds here, Tether's authority or a holder, are simulations with signature verification off. Each test undoes its own state changes, so the suite can rerun against one running validator.
 
 Further notes: [../docs/solana.md](../docs/solana.md), [../docs/security.md](../docs/security.md), and [../CONTRIBUTING.md](../CONTRIBUTING.md).

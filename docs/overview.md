@@ -15,7 +15,7 @@ Suggested reading order:
 
 The Ethereum package is a Hardhat project that compiles the published `TetherToken` source with solc 0.4.18 and optimizer disabled, then deploys it on chain id `31337`. `scripts/deploy.js` and `scripts/mint.js` call `assertLocalChain` and throw on every other chain id.
 
-The Solana package creates a legacy SPL token mint on devnet with the same decimals and authority layout as mainnet USDT, plus Metaplex metadata. Cluster selection is `RPC_URL`, which defaults to `https://api.devnet.solana.com`.
+The Solana package creates a legacy SPL token mint on devnet with the same decimals and authority layout as mainnet USDT, plus Metaplex metadata. Cluster selection is `RPC_URL`, which defaults to `https://api.devnet.solana.com`. It can also load a read-only snapshot of mainnet USDT, with a local key as mint and freeze authority, into a `solana-test-validator` fork.
 
 ## Questions in the code
 
